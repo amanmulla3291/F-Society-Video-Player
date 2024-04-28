@@ -4,49 +4,33 @@
     <title>F-Society</title>
     <style>
         body {
-            background-color: #000;
-            color: #f00;
-            font-family: 'Courier New', monospace;
-            margin: 0;
-            padding: 0;
+            background-color: #222;
+            color: #fff;
+            font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-        header, #video-player {
-            border: 2px solid #f00;
-            padding: 20px;
-            margin: 20px;
+        main {
+            display: flex;
+            justify-content: space-between;
             width: 90%;
-            max-width: 600px;
-            background-color: #222;
-            color: #fff;
+            max-width: 1200px;
         }
-        video {
+        aside#controls {
+            width: 200px;
+            margin-right: 20px;
+        }
+        #video-player {
+            flex-grow: 1;
+            margin-right: 20px;
+        }
+        #myVideo {
             width: 100%;
-            height: auto;
+            max-height: 500px;
         }
-        @media (max-width: 600px) {
-            header, #video-player {
-                width: 100%;
-            }
-        }
-        header {
-            background: #222;
-            color: #f00;
-            padding: 20px;
-            text-align: center;
-            border-bottom: 3px solid #f00;
-            margin-bottom: 20px;
-        }
-        header h1 {
-            font-size: 2.5em;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        header p {
-            font-size: 1.2em;
-            font-style: italic;
+        aside {
+            flex: 1;
         }
     </style>
 </head>
@@ -56,34 +40,94 @@
         <p>We are finally awake.</p>
     </header>
     <main>
+        <aside id="controls">
+            <h2>Controls</h2>
+            <div>
+                <h4>Choose Video</h4>
+                <input type="file" id="file-input" accept="video/*">
+            </div>
+            <div>
+                <h4>Choose Folder</h4>
+                <input type="file" id="folder-input" webkitdirectory directory multiple>
+            </div>
+            <div>
+                <input type="checkbox" id="subtitle-toggle"> Turn subtitles on/off
+            </div>
+        </aside>
         <section id="video-player">
             <h2>Watch with us</h2>
             <p id="file-name">No file selected</p>
-            <input type="file" id="file-input" accept="video/*">
-            <input type="checkbox" id="subtitle-toggle"> Turn subtitles on/off
             <video id="myVideo" controls></video>
+            <button id="play-pause">Play/Pause</button>
+            <input type="range" id="volume" min="0" max="1" step="0.1">
+            <button id="fullscreen">Fullscreen</button>
         </section>
+        <aside>
+            <p id="folder-name" style="color: red;"></p>
+            <ul id="video-list"></ul>
+        </aside>
     </main>
     <script>
         var video = document.getElementById('myVideo');
         var fileInput = document.getElementById('file-input');
-        var subtitleToggle = document.getElementById('subtitle-toggle');
+        var folderInput = document.getElementById('folder-input');
         var fileNameElement = document.getElementById('file-name');
+        var videoList = document.getElementById('video-list');
+        var playPauseButton = document.getElementById('play-pause');
+        var volumeInput = document.getElementById('volume');
+        var fullscreenButton = document.getElementById('fullscreen');
 
         fileInput.addEventListener('change', function(e) {
             var file = e.target.files[0];
-            if (file) {
-                var fileURL = URL.createObjectURL(file);
-                video.src = fileURL;
-                fileNameElement.textContent = 'Now playing: ' + file.name;
-            } else {
-                fileNameElement.textContent = 'No file selected';
+            var fileURL = URL.createObjectURL(file);
+            video.src = fileURL;
+            fileNameElement.textContent = 'Now playing: ' + file.name;
+        });
+
+        folderInput.addEventListener('change', function(e) {
+            var files = e.target.files;
+            var folderNameElement = document.getElementById('folder-name');
+            folderNameElement.textContent = 'Folder selected';
+            videoList.innerHTML = '';
+            for (var i = 0; i < files.length; i++) {
+                if (files[i].type.startsWith('video/')) {
+                    var li = document.createElement('li');
+                    var a = document.createElement('a');
+                    a.textContent = files[i].name;
+                    a.href = URL.createObjectURL(files[i]);
+                    a.onclick = function(e) {
+                        e.preventDefault();
+                        video.src = this.href;
+                        fileNameElement.textContent = 'Now playing: ' + this.textContent;
+                    };
+                    li.appendChild(a);
+                    videoList.appendChild(li);
+                }
             }
         });
 
-        subtitleToggle.addEventListener('change', function(e) {
-            var track = video.textTracks[0];
-            if (track) track.mode = e.target.checked ? 'showing' : 'disabled';
+        playPauseButton.addEventListener('click', function() {
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
+        });
+
+        volumeInput.addEventListener('input', function() {
+            video.volume = volumeInput.value;
+        });
+
+        fullscreenButton.addEventListener('click', function() {
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.mozRequestFullScreen) { // Firefox
+                video.mozRequestFullScreen();
+            } else if (video.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                video.webkitRequestFullscreen();
+            } else if (video.msRequestFullscreen) { // IE/Edge
+                video.msRequestFullscreen();
+            }
         });
     </script>
 </body>

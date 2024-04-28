@@ -4,9 +4,9 @@
     <title>F-Society</title>
     <style>
         body {
-            background-color: #222;
+            background-color: #000;
             color: #f00;
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', monospace;
             margin: 0;
             padding: 0;
             display: flex;
@@ -19,6 +19,8 @@
             margin: 20px;
             width: 90%;
             max-width: 600px;
+            background-color: #222;
+            color: #fff;
         }
         video {
             width: 100%;
@@ -29,29 +31,77 @@
                 width: 100%;
             }
         }
+        header {
+            background: #222;
+            color: #f00;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #f00;
+            margin-bottom: 20px;
+        }
+        header h1 {
+            font-size: 2.5em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        header p {
+            font-size: 1.2em;
+            font-style: italic;
+        }
+        #header-logo {
+            width: 100px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .logo-container {
+            display: flex; /* Use flexbox */
+            justify-content: center; /* Center the items horizontally */
+            align-items: center; /* Center the items vertically */
+        }
+
+        .header-logo {
+            width: 100px; /* Set the width of the image */
+            height: auto; /* Keep the aspect ratio of the image */
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>F-Society</h1>
+        <div class="logo-container">
+            <img src="https://media1.tenor.com/m/mKqTKeneyoMAAAAC/fsociety.gif" alt="F-Society Logo" class="header-logo">
+            <h1>F-Society</h1>
+            <img src="https://media1.tenor.com/m/mKqTKeneyoMAAAAC/fsociety.gif" alt="F-Society Logo" class="header-logo">
+        </div>
         <p>We are finally awake.</p>
     </header>
     <main>
         <section id="video-player">
             <h2>Watch with us</h2>
+            <p id="file-name">No file selected</p>
             <input type="file" id="file-input" accept="video/*">
+            <input type="checkbox" id="subtitle-toggle" /> Turn subtitles on/off
             <video id="myVideo" controls></video>
         </section>
     </main>
     <script>
-    var video = document.getElementById('myVideo');
-    var fileInput = document.getElementById('file-input');
+        var video = document.getElementById('myVideo');
+        var fileInput = document.getElementById('file-input');
+        var subtitleToggle = document.getElementById('subtitle-toggle');
+        var fileNameElement = document.getElementById('file-name');
 
-    fileInput.addEventListener('change', function(e) {
-        var file = e.target.files[0];
-        var fileURL = URL.createObjectURL(file);
-        video.src = fileURL;
-    });
+        fileInput.addEventListener('change', function(e) {
+            var file = e.target.files[0];
+            var fileURL = URL.createObjectURL(file);
+            video.src = fileURL;
+            fileNameElement.textContent = 'Now playing: ' + file.name;
+        });
+
+        subtitleToggle.addEventListener('change', function(e) {
+            var track = video.textTracks[0];
+            if (track) track.mode = e.target.checked ? 'showing' : 'disabled';
+        });
     </script>
 </body>
 </html>

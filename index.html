@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>F-Society</title>
+    <style>
+        body {
+            background-color: #222;
+            color: #f00;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header, #video-player {
+            border: 2px solid #f00;
+            padding: 20px;
+            margin: 20px;
+            width: 90%;
+            max-width: 600px;
+        }
+        video {
+            width: 100%;
+            height: auto;
+        }
+        @media (max-width: 600px) {
+            header, #video-player {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>F-Society</h1>
+        <p>We are finally awake.</p>
+    </header>
+    <main>
+        <section id="video-player">
+            <h2>Watch with us</h2>
+            <input type="file" id="file-input" accept="video/*">
+            <video id="myVideo" controls></video>
+        </section>
+    </main>
+    <script>
+    var video = document.getElementById('myVideo');
+    var fileInput = document.getElementById('file-input');
+
+    fileInput.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        var fileURL = URL.createObjectURL(file);
+        video.src = fileURL;
+    });
+    </script>
+</body>
+</html>
